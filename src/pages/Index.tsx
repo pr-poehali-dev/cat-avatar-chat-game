@@ -8,6 +8,7 @@ import Icon from '@/components/ui/icon';
 import AvatarGenerator from '@/components/AvatarGenerator';
 import StoriesChat from '@/components/StoriesChat';
 import CatchBallGame from '@/components/CatchBallGame';
+import FishingGame from '@/components/FishingGame';
 import Leaderboard from '@/components/Leaderboard';
 import UserProfile from '@/components/UserProfile';
 
@@ -17,7 +18,9 @@ const Index = () => {
   const [userName, setUserName] = useState('');
   const [showProfile, setShowProfile] = useState(false);
   const [gameScore, setGameScore] = useState(0);
+  const [fishingScore, setFishingScore] = useState(0);
   const [totalStories, setTotalStories] = useState(0);
+  const [selectedGame, setSelectedGame] = useState<'catchball' | 'fishing'>('catchball');
 
   const handleAvatarCreate = (avatar: any, name: string) => {
     setUserAvatar(avatar);
@@ -70,7 +73,7 @@ const Index = () => {
             <UserProfile
               userName={userName}
               userAvatar={userAvatar}
-              gameScore={gameScore}
+              gameScore={Math.max(gameScore, fishingScore)}
               totalStories={totalStories}
             />
           </div>
@@ -124,14 +127,42 @@ const Index = () => {
 
               <TabsContent value="games" className="mt-0">
                 <Card className="p-6 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-primary/20">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <span className="text-3xl">🎮</span>
-                    Мини-игры с котиками
-                  </h2>
-                  <CatchBallGame
-                    userName={userName}
-                    onScoreUpdate={(score) => setGameScore(Math.max(gameScore, score))}
-                  />
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-3">
+                      <span className="text-3xl">🎮</span>
+                      Мини-игры с котиками
+                    </h2>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={selectedGame === 'catchball' ? 'default' : 'outline'}
+                        onClick={() => setSelectedGame('catchball')}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="text-xl">⚽</span>
+                        Поймай шарик
+                      </Button>
+                      <Button
+                        variant={selectedGame === 'fishing' ? 'default' : 'outline'}
+                        onClick={() => setSelectedGame('fishing')}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="text-xl">🎣</span>
+                        Рыбалка
+                      </Button>
+                    </div>
+                  </div>
+
+                  {selectedGame === 'catchball' ? (
+                    <CatchBallGame
+                      userName={userName}
+                      onScoreUpdate={(score) => setGameScore(Math.max(gameScore, score))}
+                    />
+                  ) : (
+                    <FishingGame
+                      userName={userName}
+                      onScoreUpdate={(score) => setFishingScore(Math.max(fishingScore, score))}
+                    />
+                  )}
                 </Card>
               </TabsContent>
 
